@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import Greeting from './components/Greeting.vue'
+import AWS from 'aws-sdk';
+import { ref, onMounted } from 'vue';
 
 const buttons = [
             {
@@ -45,11 +47,38 @@ const buttons = [
               href: "https://xing.com",
               color: "#026466"
             }
-      ]
-        
+      ];
+
+AWS.config.update({
+  credentials: {
+    accessKeyId: import.meta.env.VITE_ACCESS_KEY_ID,
+    secretAccessKey: import.meta.env.VITE_SECRET_ACCESS_KEY,
+  },
+    region: import.meta.env.VITE_REGION,
+    s3BucketEndpoint: true,
+});
+const ep = new AWS.Endpoint(import.meta.env.VITE_S3_BUCKET_ENDPOINT);
+
+const s3 = new AWS.S3({ signatureVersion: 'v4', endpoint: ep });
+const bucketName = 'website-assets'
+
+const objectKey = 'background.jpg';
+
+const backgroundImage = ref('');
+
+onMounted(async () => {
+  try {
+    const data = await s3.getObject({ Bucket: `${bucketName}`, Key: objectKey }).promise();
+    const url = URL.createObjectURL(new Blob([data.Body as string], { type: data.ContentType }));
+    backgroundImage.value = url;
+  } catch (error) {
+    console.error(error);
+  }
+});
 </script>
 
 <template>
+  <div :style="{ backgroundImage: `url(${backgroundImage})` }">
   <v-container class="bg-surface-variant">
     <v-row align="center" justify="center" class="ma-4 pa-4" no-gutters>
         <img alt="Vue logo" src="./assets/logo.svg" width="125" height="125" />
@@ -76,6 +105,7 @@ const buttons = [
       </v-col>
     </v-row>
   </v-container> 
+  </div>
 </template>
 
 <style scoped>
