@@ -1,53 +1,8 @@
 <script setup lang="ts">
 import AWS from 'aws-sdk';
 import { ref, onMounted } from 'vue';
-
-const buttons = [
-            {
-              name: "Website",
-              icon: "fa-regular fa-user",
-              href: "https://github.com",
-              color: "#cccccc"
-            },
-            {
-              name: "Blog",
-              icon: "fa-brands fa-blogger",
-              href: "https://github.com",
-              color: "#cccccc"
-            },
-
-            {
-              name: "Github",
-              icon: "fa-brands fa-github",
-              href: "https://github.com",
-              color: "#ffffff"
-            },
-/*            {
-              name: "Twitter",
-              icon: "fa-brands fa-twitter",
-              href: "https://twitter.com",
-              color: "#1DA1F2"
-            },
-            */
-            {
-              name: "LinkedIn",
-              icon: "fa-brands fa-linkedin",
-              href: "https://linkedin.com",
-              color: "#0077B5"
-            },
-            {
-              name: "Xing",
-              icon: "fa-brands fa-xing",
-              href: "https://xing.com",
-              color: "#026466"
-            },
-            {
-              name: "Mail",
-              icon: "fa-solid fa-envelope",
-              href: "https://github.com",
-              color: "#DB4437"
-            },
-      ];
+import axios from 'axios';
+import process from 'process';
 
 AWS.config.update({
   credentials: {
@@ -64,6 +19,7 @@ const s3 = new AWS.S3({ signatureVersion: 'v4', endpoint: ep });
 const backgroundImage = ref('');
 const logoImage = ref('');
 const favicon = ref('');
+const buttons = ref('');
 
 async function getS3ImageUrl(objectKey: string): Promise<string> {
   const bucketName = 'website-assets'
@@ -81,6 +37,15 @@ onMounted(async () => {
 
     const faviconObjectKey = 'favicon.ico';
     favicon.value = await getS3ImageUrl(faviconObjectKey);
+
+    const apiUrl = import.meta.env.VITE_API_URL;
+    const jwtToken = import.meta.env.VITE_JWT_TOKEN;
+    const response = await axios.get(`${apiUrl}/socials`, {
+      headers: {
+        Authorization: `Bearer ${jwtToken}`,
+      },
+    });
+    buttons.value = response.data;
   } catch (error) {
     console.error(error);
   }
@@ -88,7 +53,7 @@ onMounted(async () => {
 </script>
 
 <template>
-<!--  <div class="background" :style="{ backgroundImage: `url(${backgroundImage})` }"> -->
+  <div class="background" :style="{ backgroundImage: `url(${backgroundImage})` }">
     <v-container class="bg-surface-variant">
       <v-row align="center" justify="center" class="ma-2 pa-2" no-gutters>
           <v-avatar size="250" rounded>
@@ -124,7 +89,7 @@ onMounted(async () => {
       </v-row>
     </v-container> 
     <link rel="shortcut icon" :href="favicon" type="image/x-icon" />
-<!-- </div> -->
+ </div>
 </template>
 
 <style scoped>
