@@ -16,10 +16,17 @@ AWS.config.update({
 const ep = new AWS.Endpoint(import.meta.env.VITE_S3_BUCKET_ENDPOINT);
 const s3 = new AWS.S3({ signatureVersion: 'v4', endpoint: ep });
 
+interface Button {
+  name: string;
+  href: string;
+  icon: string;
+  color: string;
+}
+
 const backgroundImage = ref('');
 const logoImage = ref('');
 const favicon = ref('');
-const buttons = ref('');
+const buttons = ref<Button[]>([]);
 
 async function getS3ImageUrl(objectKey: string): Promise<string> {
   const bucketName = 'website-assets'
@@ -40,7 +47,7 @@ onMounted(async () => {
 
     const apiUrl = import.meta.env.VITE_API_URL;
     const jwtToken = import.meta.env.VITE_JWT_TOKEN;
-    const response = await axios.get(`${apiUrl}/socials`, {
+    const response = await axios.get<Button[]>(`${apiUrl}/socials`, {
       headers: {
         Authorization: `Bearer ${jwtToken}`,
       },
