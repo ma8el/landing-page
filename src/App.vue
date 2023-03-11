@@ -1,20 +1,8 @@
 <script setup lang="ts">
-import AWS from 'aws-sdk';
 import { ref, onMounted } from 'vue';
 import axios from 'axios';
 import process from 'process';
-
-AWS.config.update({
-  credentials: {
-    accessKeyId: import.meta.env.VITE_ACCESS_KEY_ID,
-    secretAccessKey: import.meta.env.VITE_SECRET_ACCESS_KEY,
-  },
-    region: import.meta.env.VITE_REGION,
-    s3BucketEndpoint: true,
-});
-
-const ep = new AWS.Endpoint(import.meta.env.VITE_S3_BUCKET_ENDPOINT);
-const s3 = new AWS.S3({ signatureVersion: 'v4', endpoint: ep });
+import meImg from '@/assets/images/me.jpg'
 
 interface Button {
   name: string;
@@ -22,29 +10,10 @@ interface Button {
   icon: string;
   color: string;
 }
-
-const backgroundImage = ref('');
-const logoImage = ref('');
-const favicon = ref('');
 const buttons = ref<Button[]>([]);
-
-async function getS3ImageUrl(objectKey: string): Promise<string> {
-  const bucketName = 'website-assets'
-  const imageData = await s3.getObject({ Bucket: `${bucketName}`, Key: objectKey }).promise();
-  return URL.createObjectURL(new Blob([imageData.Body as string], { type: imageData.ContentType }));
-}
 
 onMounted(async () => {
   try {
-    const bgObjectKey = 'background.jpg';
-    backgroundImage.value = await getS3ImageUrl(bgObjectKey);
-
-    const logoObjectKey = 'me.jpg';
-    logoImage.value = await getS3ImageUrl(logoObjectKey);
-
-    const faviconObjectKey = 'favicon.ico';
-    favicon.value = await getS3ImageUrl(faviconObjectKey);
-
     const apiUrl = import.meta.env.VITE_API_URL;
     const jwtToken = import.meta.env.VITE_JWT_TOKEN;
     const response = await axios.get<Button[]>(`${apiUrl}/socials`, {
@@ -60,11 +29,11 @@ onMounted(async () => {
 </script>
 
 <template>
-  <div class="background" :style="{ backgroundImage: `url(${backgroundImage})` }">
+  <div class="background">
     <v-container class="bg-surface-variant">
       <v-row align="center" justify="center" class="ma-2 pa-2" no-gutters>
           <v-avatar size="250" rounded>
-            <img alt="Profile pic" :src="logoImage" width="250" height="250" />
+            <img alt="Profile pic" :src="meImg" width="250" height="250" />
           </v-avatar>
       </v-row>
       <v-row align="center" justify="center" class="ma-2 pa-2" no-gutters>
@@ -95,7 +64,6 @@ onMounted(async () => {
         </v-col>
       </v-row>
     </v-container> 
-    <link rel="shortcut icon" :href="favicon" type="image/x-icon" />
  </div>
 </template>
 
@@ -111,6 +79,7 @@ onMounted(async () => {
 }
 
 .background{
+  background-image: url("assets/images/background.jpg");
   background-size: 100% 100%;
   opacity: 1;
   height: 100vh;
