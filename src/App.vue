@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
 import axios from 'axios';
-import process from 'process';
 import meImg from '@/assets/images/me.jpg'
 
 interface Button {
