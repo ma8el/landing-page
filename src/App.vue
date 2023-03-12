@@ -14,7 +14,7 @@ const buttons = ref<Button[]>([]);
 onMounted(async () => {
   try {
 //    const apiUrl = import.meta.env.API_URL;
-    const apiUrl = "https://db.m4k.site";
+    const apiUrl = import.meta.env.VITE_API_URL;
     const jwtToken = import.meta.env.VITE_JWT_TOKEN;
     const response = await axios.get<Button[]>(`${apiUrl}/socials`, {
       headers: {
