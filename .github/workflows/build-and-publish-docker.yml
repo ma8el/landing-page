@@ -24,6 +24,7 @@ jobs:
         with:
           push: true
           tags: ${{ vars.SCW_IMAGE_NAME }}:latest
-        env:
-          VITE_API_URL: ${{ vars.VITE_API_URL }}
-          VITE_JWT_TOKEN: ${{ secrets.VITE_JWT_TOKEN}}
+          build-args: |
+            "VITE_API_URL=${{ secrets.VITE_API_URL }}"
+          secrets: |
+            "VITE_JWT_TOKEN=${{ secrets.VITE_JWT_TOKEN }}"
