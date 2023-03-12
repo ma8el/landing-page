@@ -21,6 +21,9 @@ jobs:
       -
         name: Build and push
         uses: docker/build-push-action@v4
+        env:
+          API_URL: ${{ vars.VITE_API_URL }}
+          JWT_TOKEN: ${{ secrets.VITE_JWT_TOKEN}}
         with:
           push: true
           tags: ${{ vars.SCW_IMAGE_NAME }}:latest
