@@ -2,6 +2,8 @@
 FROM node:lts-alpine as build-stage
 WORKDIR /app
 COPY package*.json ./
+ENV VITE_APP_API_URL=${VITE_API_URL}
+ENV VITE_APP_JWT_TOKEN=${VITE_JWT_TOKEN}
 RUN npm install
 COPY . .
 RUN npm run build
