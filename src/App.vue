@@ -2,6 +2,7 @@
 import { ref, onMounted } from 'vue';
 import axios from 'axios';
 import meImg from '@/assets/images/me.jpg'
+import { useAuthStore } from './store';
 
 interface Button {
   name: string;
@@ -10,12 +11,14 @@ interface Button {
   color: string;
 }
 const buttons = ref<Button[]>([]);
+const authStore = useAuthStore();
 
 onMounted(async () => {
   try {
-//    const apiUrl = import.meta.env.API_URL;
     const apiUrl = import.meta.env.VITE_API_URL;
-    const jwtToken = import.meta.env.VITE_JWT_TOKEN;
+    const jwtToken = authStore.$state.token;
+    console.log(apiUrl)
+    console.log(jwtToken)
     const response = await axios.get<Button[]>(`${apiUrl}/socials`, {
       headers: {
         Authorization: `Bearer ${jwtToken}`,
