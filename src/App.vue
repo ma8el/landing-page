@@ -17,8 +17,6 @@ onMounted(async () => {
   try {
     const apiUrl = import.meta.env.VITE_API_URL;
     const jwtToken = authStore.$state.token;
-    console.log(apiUrl)
-    console.log(jwtToken)
     const response = await axios.get<Button[]>(`${apiUrl}/socials`, {
       headers: {
         Authorization: `Bearer ${jwtToken}`,
